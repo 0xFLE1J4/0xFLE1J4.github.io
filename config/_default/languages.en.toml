@@ -1,0 +1,30 @@
+disabled = false
+languageCode = "en"
+languageName = "English"
+weight = 1
+title = "0xFLE1J4"
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+  dateFormat = "2 January 2006"
+  #logo = "img/logo.png"
+  # secondaryLogo = "img/secondary-logo.png"
+  # description = "My awesome website"
+  # copyright = "Copy, _right?_ :thinking_face:"
+
+[params.author]
+  name = " "
+  #email = "youremail@example.com"
+  image = "profile.png"
+  imageQuality = 96
+  headline = "Salut et bienvenue sur mon blog ! Ici, je partage mes aventures dans l'univers de la cybersécurité : writeups détaillés de machines CTF, notes de recherche, projets personnels et découvertes du moment. Que tu débutes tout juste ou que tu sois un expert chevronné, j'espère que mes explorations te donneront envie d'apprendre et d'expérimenter à ton tour."
+  bio = "CTF player"
+  links = [
+    #{ facebook = "https://facebook.com/username" },
+    { github = "https://github.com/0xFLE1J4" },
+    #{ linkedin = "https://linkedin.com/in/username" },
+    { reddit = "https://reddit.com/user/username" },
+    #{ telegram = "https://t.me/username" },
+  ]
