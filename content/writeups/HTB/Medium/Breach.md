@@ -1,3 +1,15 @@
+---
+title: Breach
+date: 2025-09-10
+tags:
+  - hackthebox
+  - writeups
+  - medium
+  - windows
+  - kerberoasting
+  - SeImpersonatePrivilege
+  - mssql
+---
 
 **Bienvenue dans ce writeup détaillé du labo "Breach" de VulnLab, disponible sur Hack The Box.** Dans ce guide, je vais te montrer comment j’ai réussi à compromettre un environnement Active Directory en enchaînant plusieurs techniques d’attaque réalistes. L’objectif ? Passer d’un simple accès SMB anonyme à un contrôle total du domaine, en exploitant des failles courantes dans les infrastructures Windows.
 
@@ -17,12 +29,12 @@ rustscan -a 10.129.14.15 -- -sCV -Pn
 PORT      STATE SERVICE       REASON          VERSION
 53/tcp    open  domain        syn-ack ttl 127 Simple DNS Plus
 80/tcp    open  http          syn-ack ttl 127 Microsoft IIS httpd 10.0
-|_http-title: IIS Windows Server
+|_http-server-header: Microsoft-IIS/10.0
 | http-methods:
 |   Supported Methods: OPTIONS TRACE GET HEAD POST
 |_  Potentially risky methods: TRACE
-|_http-server-header: Microsoft-IIS/10.0
-88/tcp    open  kerberos-sec  syn-ack ttl 127 Microsoft Windows Kerberos (server time: 2025-12-13 18:24:20Z)
+|_http-title: IIS Windows Server
+88/tcp    open  kerberos-sec  syn-ack ttl 127 Microsoft Windows Kerberos (server time: 2025-12-14 17:19:11Z)
 135/tcp   open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
 139/tcp   open  netbios-ssn   syn-ack ttl 127 Microsoft Windows netbios-ssn
 389/tcp   open  ldap          syn-ack ttl 127 Microsoft Windows Active Directory LDAP (Domain: breach.vl0., Site: Default-First-Site-Name)
@@ -30,10 +42,51 @@ PORT      STATE SERVICE       REASON          VERSION
 464/tcp   open  kpasswd5?     syn-ack ttl 127
 593/tcp   open  ncacn_http    syn-ack ttl 127 Microsoft Windows RPC over HTTP 1.0
 636/tcp   open  tcpwrapped    syn-ack ttl 127
+1433/tcp  open  ms-sql-s      syn-ack ttl 127 Microsoft SQL Server 2019 15.00.2000.00; RTM
+|_ssl-date: 2025-12-14T17:20:43+00:00; +53s from scanner time.
+|_ms-sql-info: ERROR: Script execution failed (use -d to debug)
+| ssl-cert: Subject: commonName=SSL_Self_Signed_Fallback
+| Issuer: commonName=SSL_Self_Signed_Fallback
+| Public Key type: rsa
+| Public Key bits: 2048
+| Signature Algorithm: sha256WithRSAEncryption
+| Not valid before: 2025-12-14T17:14:57
+| Not valid after:  2055-12-14T17:14:57
+| MD5:   d9de34874b7eceebddcd22cc5493175b
+| SHA-1: eb151cfdf4afd433fdc6793e52798a2bde19ae0d
+| -----BEGIN CERTIFICATE-----
+| MIIDADCCAeigAwIBAgIQHCQoXyuhX4xCUtfO6ZjWuzANBgkqhkiG9w0BAQsFADA7
+| MTkwNwYDVQQDHjAAUwBTAEwAXwBTAGUAbABmAF8AUwBpAGcAbgBlAGQAXwBGAGEA
+| bABsAGIAYQBjAGswIBcNMjUxMjE0MTcxNDU3WhgPMjA1NTEyMTQxNzE0NTdaMDsx
+| OTA3BgNVBAMeMABTAFMATABfAFMAZQBsAGYAXwBTAGkAZwBuAGUAZABfAEYAYQBs
+| AGwAYgBhAGMAazCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOgxOjgN
+| wG4EG1K4nQgLyfuyOzaHb3STBJ+FuMZ5GwbIRmzI5ytgC4qrNn/hZK4Y2cF0P4k/
+| WaZ4sxG4fycjZIIPkEuiugUSntdp2mmr9S/8d762tDSD2xaZs6gV0xDkx3tmVvQF
+| ms0ftju9LNt7n4B3WInNHub4d+bjqSN4dDeDfTLBiV72xzHJAafmW+gIA5n43VPU
+| 09XoaBRboWiHVyQ/hd8r30QZd5qL/T6rWabjzfnavicgObGHPTmXg6HpSE8yRqCY
+| ZPyW5wXb50QSGNVR5sT2PgX69u/wQoKaJ9QrTRAaspOchub1AUYun+duopGyUPzS
+| OcQIdBmpTNeY+x0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAiHiGRjQ2agb3bE5
+| hC4phoC4m18zatffc4giAV9X/BERefZHYMaPefRnc/j5S+VlBfDfet9xcvfJjkz1
+| JyFoqINPF2SM0vCNRykR0JagmS9/YovOygasqd34XyRrCuyEB1vrCzIxppHjuGI/
+| XSWNTLcH5s8YzN2njZmjlSRtqV4zA5BdtO9fpstx5HQ6rw0oByjkI0SPB3wJumpo
+| ElXizIGaRYfWpcTiIFNPKlIhJzu19ih1Jc/EbjI0O/jBxeTU4ozjnPiJopbegn8w
+| kRUq7Q1jATa+smdssp52SYrrokkdmADAb7H7wTasUzifWCC0CsK2cgAt+Xx/887y
+| pOshIg==
+|_-----END CERTIFICATE-----
+|_ms-sql-ntlm-info: ERROR: Script execution failed (use -d to debug)
 3268/tcp  open  ldap          syn-ack ttl 127 Microsoft Windows Active Directory LDAP (Domain: breach.vl0., Site: Default-First-Site-Name)
 3269/tcp  open  tcpwrapped    syn-ack ttl 127
 3389/tcp  open  ms-wbt-server syn-ack ttl 127 Microsoft Terminal Services
-|_ssl-date: 2025-12-13T18:25:55+00:00; 0s from scanner time.
+| rdp-ntlm-info:
+|   Target_Name: BREACH
+|   NetBIOS_Domain_Name: BREACH
+|   NetBIOS_Computer_Name: BREACHDC
+|   DNS_Domain_Name: breach.vl
+|   DNS_Computer_Name: BREACHDC.breach.vl
+|   DNS_Tree_Name: breach.vl
+|   Product_Version: 10.0.20348
+|_  System_Time: 2025-12-14T17:20:04+00:00
+|_ssl-date: 2025-12-14T17:20:43+00:00; +54s from scanner time.
 | ssl-cert: Subject: commonName=BREACHDC.breach.vl
 | Issuer: commonName=BREACHDC.breach.vl
 | Public Key type: rsa
@@ -61,39 +114,32 @@ PORT      STATE SERVICE       REASON          VERSION
 | Yv+1uiByI7ypUay4F67yceFC+1QhYsP4DONBQu/lcDhRgSJX0/DRUbNq8ilXGD0j
 | VcqqM+HRpdHucUitpvX1KojPvNQaCIFmE/cZww==
 |_-----END CERTIFICATE-----
-| rdp-ntlm-info:
-|   Target_Name: BREACH
-|   NetBIOS_Domain_Name: BREACH
-|   NetBIOS_Computer_Name: BREACHDC
-|   DNS_Domain_Name: breach.vl
-|   DNS_Computer_Name: BREACHDC.breach.vl
-|   DNS_Tree_Name: breach.vl
-|   Product_Version: 10.0.20348
-|_  System_Time: 2025-12-13T18:25:16+00:00
 5985/tcp  open  http          syn-ack ttl 127 Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
 |_http-title: Not Found
 |_http-server-header: Microsoft-HTTPAPI/2.0
 9389/tcp  open  mc-nmf        syn-ack ttl 127 .NET Message Framing
 49664/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
 49669/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
-50015/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+49677/tcp open  ncacn_http    syn-ack ttl 127 Microsoft Windows RPC over HTTP 1.0
+49913/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
+52108/tcp open  msrpc         syn-ack ttl 127 Microsoft Windows RPC
 Service Info: Host: BREACHDC; OS: Windows; CPE: cpe:/o:microsoft:windows
 
 Host script results:
+| p2p-conficker:
+|   Checking for Conficker.C or higher...
+|   Check 1 (port 64804/tcp): CLEAN (Timeout)
+|   Check 2 (port 3762/tcp): CLEAN (Timeout)
+|   Check 3 (port 29080/udp): CLEAN (Timeout)
+|   Check 4 (port 47905/udp): CLEAN (Timeout)
+|_  0/4 checks are positive: Host is CLEAN or ports are blocked
 | smb2-time:
-|   date: 2025-12-13T18:25:20
+|   date: 2025-12-14T17:20:05
 |_  start_date: N/A
 | smb2-security-mode:
 |   311:
 |_    Message signing enabled and required
-|_clock-skew: mean: 0s, deviation: 0s, median: 0s
-| p2p-conficker:
-|   Checking for Conficker.C or higher...
-|   Check 1 (port 20984/tcp): CLEAN (Timeout)
-|   Check 2 (port 56622/tcp): CLEAN (Timeout)
-|   Check 3 (port 30122/udp): CLEAN (Timeout)
-|   Check 4 (port 27171/udp): CLEAN (Timeout)
-|_  0/4 checks are positive: Host is CLEAN or ports are blocked
+|_clock-skew: mean: 53s, deviation: 0s, median: 53s
 ```
 
 - Editons le fichier hosts avec `nxc`
