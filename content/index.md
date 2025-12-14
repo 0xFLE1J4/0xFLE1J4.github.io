@@ -8,7 +8,7 @@ draft: false
 ![Bannière optionnelle : une image hacker cool, comme un terminal ou un logo CTF](media/images/garde.jpg)
 
 
-## Bienvenue sur mon blog de writeups !
+# Bienvenue sur mon blog de writeups !
 
 Salut la communauté ! 👾
 
@@ -31,6 +31,7 @@ Passionné depuis 2022, je pratique la cybersécurité en éthique . Certificati
 Suivez-moi sur :
 - GitHub : https://github.com/0xFLE1J4
 - LinkedIn : https://www.linkedin.com/in/0xfle1j4
+- Bsky : https://0xfle1j4.bsky.social
 
 > [!Disclaimer]
 >  Tous les writeups sont à but éducatif uniquement. Respectez les règles des plateformes et la loi !
